@@ -1,0 +1,150 @@
+date,amount,currency,type,category,description,status
+2025-07-19,4649950.747178162,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-19,3702884.188021398,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-20,2863350.3534391033,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-20,3414876.128012548,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-21,6473311.7419943465,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-21,3534021.774421745,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-22,4543646.833595139,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-22,1972925.8799271376,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-23,8149752.007785158,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-23,3748633.3847651123,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-24,6001871.531604544,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-24,5243500.562002068,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-25,6097730.933568515,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-25,2430970.2698899778,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-25,3000000.0,KZT,outflow,Payroll,Employee salaries,actual
+2025-07-26,5942652.523311224,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-26,3002539.215758901,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-27,10027104.080104709,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-27,3117523.1399684865,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-28,6927262.581531635,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-28,1895278.3531230832,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-29,6355070.29259814,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-29,5948758.754112401,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-30,4482566.220350825,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-30,3166280.5693975454,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-07-31,2252766.8661503466,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-07-31,3577329.689978082,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-01,5099748.1785326395,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-01,2994615.6837543864,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-02,6493018.710833974,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-02,4496585.760858891,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-03,5495162.242675621,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-03,4073175.9409339693,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-04,4860028.492266393,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-04,4647354.164368611,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-05,5448182.976245324,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-05,5667118.711772999,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-06,8274223.162870942,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-06,4737312.200375235,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-07,5922756.360893165,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-07,3807523.933124981,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-08,8648634.710293181,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-08,6716517.021199243,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-09,7412004.360064091,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-09,5878207.5220483765,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-10,4747109.846787421,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-10,4272113.618596637,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-10,3000000.0,KZT,outflow,Payroll,Employee salaries,actual
+2025-08-11,3522761.826587042,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-11,2722987.307314211,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-12,6453118.064242971,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-12,5474044.166561934,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-13,7908936.451554706,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-13,2467404.053372917,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-14,6350413.976443631,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-14,4192775.9943243186,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-15,5782346.699685264,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-15,4170792.332285655,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-16,5164664.968764691,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-16,3457295.1946370504,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-17,4448745.737391906,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-17,3379843.891536664,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-18,4735741.302029666,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-18,4228863.277339256,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-19,4157340.9576789383,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-19,2360246.6892263363,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-20,4792663.508260203,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-20,2182327.0208688453,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-21,6295230.697083034,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-21,2892692.6224048752,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-22,3009577.551268891,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-22,4474485.369453733,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-23,5883188.502403583,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-23,4315949.703917452,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-24,3062333.9282101886,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-24,5994678.03910792,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-25,7066846.399749436,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-25,3158784.85128067,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-25,3000000.0,KZT,outflow,Payroll,Employee salaries,actual
+2025-08-26,4358118.172189114,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-26,1851855.952686261,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-27,5020245.262367517,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-27,3193428.347693174,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-28,6484099.567982611,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-28,3140227.178566036,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-29,8312212.313361659,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-29,3757050.291269091,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-30,5505923.393850801,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-30,4552965.812066355,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-08-31,7125184.768459579,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-08-31,4943685.001001471,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-01,6742925.6691314485,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-01,5339407.800572803,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-02,5984213.207968763,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-02,3001842.830985398,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-03,8040380.2645669095,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-03,4406609.130269498,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-04,6692205.6301121395,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-04,5616081.943909817,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-05,7835901.848013563,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-05,3623424.5721175047,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-06,6503933.4621733045,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-06,5486093.138528677,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-07,8038392.573611017,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-07,4517543.418191722,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-08,6100139.490386307,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-08,3669709.7484365217,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-09,5510478.17192376,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-09,6811909.44744951,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-10,8074592.576421951,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-10,4553979.503115701,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-10,3000000.0,KZT,outflow,Payroll,Employee salaries,actual
+2025-09-11,7898449.154952377,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-11,2873866.112663608,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-12,4671188.433036501,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-12,2693319.1297815586,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-13,4149492.723754487,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-13,1581155.3797922255,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-14,3785022.9189795265,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-14,3725256.605049196,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-15,6897397.857998938,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-15,3571014.1129144384,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-16,10639456.795722108,KZT,inflow,Sales,Kaspi QR / Bank transfers,actual
+2025-09-16,4483019.931300237,KZT,outflow,Suppliers,Raw materials / Services,actual
+2025-09-17,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-09-19,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-09-22,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-09-24,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-09-25,3200000.0,KZT,outflow,Payroll,Planned salaries,planned
+2025-09-25,2000000.0,KZT,outflow,Tax,VAT / CIT payment,planned
+2025-09-26,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-09-29,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-01,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-03,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-06,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-08,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-10,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-10,3200000.0,KZT,outflow,Payroll,Planned salaries,planned
+2025-10-13,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-15,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-17,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-20,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-22,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-24,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-25,3200000.0,KZT,outflow,Payroll,Planned salaries,planned
+2025-10-25,2000000.0,KZT,outflow,Tax,VAT / CIT payment,planned
+2025-10-27,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-29,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned
+2025-10-31,6000000.0,KZT,inflow,Sales,Planned sales inflow,planned

@@ -1,12 +1,6 @@
-# Liquidity AI Assistant — MVP (Streamlit)
-# -------------------------------------------------------------
-# One-file prototype you can run in ~minutes.
-# - Generates sample data if none present (./data/*.csv)
-# - Aggregates multi-currency balances & payments
-# - Projects 30–60 day liquidity with a simple EWMA run-rate + planned cash flows
-# - What‑if scenarios: FX shock, delay top outflows, change supplier spend
-# - Recommendations: credit line need, deposit amount
-# -------------------------------------------------------------
+# Easy CFO AI Assistant for Kazakhstan-based startups
+# -------------------------
+# ~ oriented for Kazakhstan market and beginner startups to make easy financial reports and analytics. We have unique standard for writing unified Excel/CSV reports based on which this program automatically make reports and give you financial insights and recommendations (Groq).
 
 import os
 from pathlib import Path
@@ -15,92 +9,131 @@ import math
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-
 import streamlit as st
+from groq import Groq
+from dotenv import load_dotenv
 
-APP_TITLE = "Financial AI Assistant — Liquidity MVP"
-BASE_CURRENCIES = ["USD", "EUR", "KZT", "UZS"]
+load_dotenv()
+
+client = Groq(api_key=os.environ['GROK_API_KEY'])
+APP_TITLE = "Easy CFO AI Assistant — Kazakhstan Startup Edition"
+BASE_CURRENCIES = ["KZT", "USD", "RUB"] 
 DATA_DIR = Path("data")
-# Correcting file paths to be relative to the script's directory
-BAL_PATH = DATA_DIR / "citadel_highsens_balances.csv"
-PAY_PATH = DATA_DIR / "citadel_highsens_payments.csv"
-FX_PATH = DATA_DIR / "citadel_highsens_fx_rates.csv"
+
+BAL_PATH = DATA_DIR / "balances.csv"
+PAY_PATH = DATA_DIR / "payments.csv"
+FX_PATH = DATA_DIR / "fx.csv"
 TODAY = datetime.today().date()
 
+# ---------------------------
+# Groq Insights
+# ---------------------------
+
+def generate_ai_insights(client, proj: pd.DataFrame, rec: dict, base_ccy: str, horizon_days: int):
+    """Call Groq LLM to generate insights for Kazakhstan-based startups."""
+    try:
+        summary = proj[["date","closing_cash","planned_in","planned_out"]].tail(14)  # last 2 weeks
+        summary_csv = summary.to_csv(index=False)
+
+        user_prompt = f"""
+        You are a financial AI assistant for startups in Kazakhstan.
+        Base currency is {base_ccy}.
+        Forecast horizon is {horizon_days} days.
+        
+        Here is the 2-week forward projection data (CSV):
+        {summary_csv}
+
+        Key calculated values:
+        - Minimum cash: {rec['min_cash']:.0f} {base_ccy}
+        - Days below zero: {rec['days_below_zero']}
+        - Recommended credit line need: {rec['credit_line_recommendation']:.0f} {base_ccy}
+        - Deposit potential: {rec['deposit_recommendation']:.0f} {base_ccy}
+
+        Please provide:
+        1. A short executive summary of liquidity health
+        2. Risks specific to startups in Kazakhstan (FX volatility, KZT/USD moves, tax deadlines, payroll pressure)
+        3. Actionable recommendations (cash buffer, financing, investment)
+        Keep it clear, practical, and in English.
+        """
+
+        completion = client.chat.completions.create(
+            model="openai/gpt-oss-20b",
+            messages=[
+                {"role": "system", "content": "You are a CFO assistant helping Kazakhstani startups manage liquidity."},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.7,
+            max_completion_tokens=500,
+            top_p=0.95,
+            stream=False
+        )
+
+        return completion.choices[0].message.content.strip()
+    except Exception as e:
+        return f"⚠️ AI Insights unavailable: {e}"
+    
 # ---------------------------
 # Utilities & sample data
 # ---------------------------
 
 def ensure_sample_data():
-    """Ensures the data directory and sample CSV files exist."""
+    """Ensures the data directory and sample CSV files exist (Kazakhstan-oriented)."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     if not BAL_PATH.exists():
-        # Opening balances per account (multi-currency)
         bal = pd.DataFrame([
-            {"date": TODAY.isoformat(), "account": "Main USD", "currency": "USD", "balance": 850000},
-            {"date": TODAY.isoformat(), "account": "Ops EUR",  "currency": "EUR", "balance": 210000},
-            {"date": TODAY.isoformat(), "account": "Sales KZT", "currency": "KZT", "balance": 380_000_000},
-            {"date": TODAY.isoformat(), "account": "Reserve UZS","currency": "UZS", "balance": 5_400_000_000},
+            {"date": TODAY.isoformat(), "account": "Kaspi Main",   "currency": "KZT", "balance": 180_000_000},
+            {"date": TODAY.isoformat(), "account": "Halyk Ops",   "currency": "KZT", "balance": 95_000_000},
+            {"date": TODAY.isoformat(), "account": "USD Reserve", "currency": "USD", "balance": 250_000},
         ])
         bal.to_csv(BAL_PATH, index=False)
 
     if not FX_PATH.exists():
-        # Daily FX to USD (very rough sample, for demo only)
         days = pd.date_range(TODAY - timedelta(days=30), TODAY + timedelta(days=60), freq="D")
         fx_rows = []
         for d in days:
             fx_rows += [
-                {"date": d.date().isoformat(), "base": "USD", "quote": "USD", "rate": 1.0},
-                {"date": d.date().isoformat(), "base": "EUR", "quote": "USD", "rate": 1.08},
-                {"date": d.date().isoformat(), "base": "KZT", "quote": "USD", "rate": 0.0021},
-                {"date": d.date().isoformat(), "base": "UZS", "quote": "USD", "rate": 0.000079},
+                {"date": d.date().isoformat(), "base": "KZT", "quote": "KZT", "rate": 1.0},
+                {"date": d.date().isoformat(), "base": "USD", "quote": "KZT", "rate": 480.0},
+                {"date": d.date().isoformat(), "base": "RUB", "quote": "KZT", "rate": 5.2},
             ]
         pd.DataFrame(fx_rows).to_csv(FX_PATH, index=False)
 
     if not PAY_PATH.exists():
-        # Generate synthetic history (last 60d) + plan (next 45d)
         rng_hist = pd.date_range(TODAY - timedelta(days=60), TODAY - timedelta(days=1), freq="D")
         rng_plan = pd.date_range(TODAY, TODAY + timedelta(days=45), freq="D")
 
         rows = []
-        # History: random-ish sales (inflows) & ops costs (outflows)
         for d in rng_hist:
-            # Inflows (USD/KZT)
-            rows.append({"date": d.date().isoformat(), "amount": abs(np.random.normal(120000, 35000)),
-                         "currency": np.random.choice(["USD", "KZT"], p=[0.6, 0.4]),
-                         "type": "inflow", "category": "Sales", "description": "Customer receipts", "status": "actual"})
+            # Inflows: mostly sales in KZT
+            rows.append({"date": d.date().isoformat(), "amount": abs(np.random.normal(55_000_00, 18_000_00)),
+                         "currency": "KZT", "type": "inflow", "category": "Sales",
+                         "description": "Kaspi QR / Bank transfers", "status": "actual"})
             # Outflows
-            rows.append({"date": d.date().isoformat(), "amount": abs(np.random.normal(90000, 25000)),
-                         "currency": np.random.choice(["USD", "EUR", "KZT"], p=[0.4, 0.2, 0.4]),
-                         "type": "outflow", "category": "Suppliers", "description": "Pay suppliers", "status": "actual"})
-            if d.day in (5, 20):
-                rows.append({"date": d.date().isoformat(), "amount": 130000,
-                             "currency": "USD", "type": "outflow", "category": "Payroll",
-                             "description": "Payroll", "status": "actual"})
+            rows.append({"date": d.date().isoformat(), "amount": abs(np.random.normal(40_000_00, 12_000_00)),
+                         "currency": "KZT", "type": "outflow", "category": "Suppliers",
+                         "description": "Raw materials / Services", "status": "actual"})
+            if d.day in (10, 25):  # Payroll twice a month
+                rows.append({"date": d.date().isoformat(), "amount": 30_000_00,
+                             "currency": "KZT", "type": "outflow", "category": "Payroll",
+                             "description": "Employee salaries", "status": "actual"})
 
-        # Plan: deterministic upcoming payments
         for d in rng_plan:
-            if d.weekday() in (0, 2, 4):  # Mon/Wed/Fri sales inflows
-                rows.append({"date": d.date().isoformat(), "amount": 140000,
-                             "currency": "USD", "type": "inflow", "category": "Sales",
-                             "description": "Planned sales", "status": "planned"})
-            if d.day in (5, 20):
-                rows.append({"date": d.date().isoformat(), "amount": 140000,
-                             "currency": "USD", "type": "outflow", "category": "Payroll",
-                             "description": "Planned payroll", "status": "planned"})
-            if d.weekday() == 3:  # Thu suppliers batch
-                rows.append({"date": d.date().isoformat(), "amount": 110000,
-                             "currency": np.random.choice(["USD", "EUR", "KZT"], p=[0.5, 0.2, 0.3]),
-                             "type": "outflow", "category": "Suppliers",
-                             "description": "Planned suppliers", "status": "planned"})
-            if d.day == 28:
-                rows.append({"date": d.date().isoformat(), "amount": 90000,
-                             "currency": "USD", "type": "outflow", "category": "Tax",
-                             "description": "Tax payment", "status": "planned"})
+            if d.weekday() in (0, 2, 4):  # Sales inflows
+                rows.append({"date": d.date().isoformat(), "amount": 60_000_00,
+                             "currency": "KZT", "type": "inflow", "category": "Sales",
+                             "description": "Planned sales inflow", "status": "planned"})
+            if d.day in (10, 25):
+                rows.append({"date": d.date().isoformat(), "amount": 32_000_00,
+                             "currency": "KZT", "type": "outflow", "category": "Payroll",
+                             "description": "Planned salaries", "status": "planned"})
+            if d.day == 25:  # Taxes monthly
+                rows.append({"date": d.date().isoformat(), "amount": 20_000_00,
+                             "currency": "KZT", "type": "outflow", "category": "Tax",
+                             "description": "VAT / CIT payment", "status": "planned"})
 
         pd.DataFrame(rows).to_csv(PAY_PATH, index=False)
-
+    
 
 def load_data():
     """Loads and normalizes data from CSV files."""
@@ -278,42 +311,58 @@ def recommendations(df: pd.DataFrame, opening: float, safety_buffer: float):
 
 def main():
     st.set_page_config(page_title=APP_TITLE, layout="wide")
+    st.markdown(
+        """
+        <a href="https://astanahub.com/l/kak-otkryt-it-kompanyiu-v-kazakhstane" target="_blank">
+            <button style="
+                background-color:#696969;
+                color:white;
+                padding:10px 20px;
+                border:none;
+                border-radius:8px;
+                font-size:16px;
+                cursor:pointer;
+            ">🚀 Join Astana Hub</button>
+        </a>
+        """,
+        unsafe_allow_html=True
+    )
     st.title(APP_TITLE)
-    st.caption("MVP for hackathon: real‑time liquidity view, scenarios, actionable tips.")
+    st.caption("MVP for hackathon: real-time liquidity view, scenarios, actionable tips.")
 
     ensure_sample_data()
-    
     bal, pay, fx = load_data()
     if bal is None or pay is None or fx is None:
-        return # Exit if data loading fails
+        return
 
+    # Sidebar settings (same as before) ...
     with st.sidebar:
         st.subheader("Settings")
-        base_ccy = st.selectbox("Base currency", BASE_CURRENCIES, index=0)
+        base_ccy = st.selectbox("Base currency", BASE_CURRENCIES, index=0)  # default to KZT
         horizon_days = st.slider("Horizon (days)", 7, 60, 30, step=1)
         st.markdown("---")
-        st.subheader("Scenarios (What‑if)")
-        fx_shock_pct = st.slider("FX shock % (non‑base)", -20, 20, 0, step=1)
-        delay_top_n = st.slider("Delay top‑N outflows", 0, 20, 0, step=1)
+        st.subheader("Scenarios (What-if)")
+        fx_shock_pct = st.slider("FX shock % (non-base)", -20, 20, 0, step=1)
+        delay_top_n = st.slider("Delay top-N outflows", 0, 20, 0, step=1)
         delay_days = st.slider("Delay by days", -15, 30, 0, step=1)
         supplier_multiplier = st.slider("Suppliers × multiplier", 0.5, 1.5, 1.0, step=0.05)
         st.markdown("---")
         st.subheader("Policy")
-        # Added a check to prevent errors on empty dataframes
-        if not pay[(pay["type"] == "outflow") & (pay["status"] == "actual")].empty:
+        if not pay[(pay["type"]=="outflow") & (pay["status"]=="actual")].empty:
             avg_outflow = pay[(pay["type"]=="outflow") & (pay["status"]=="actual")]["amount"].mean()
         else:
             avg_outflow = 1.0
-        
         buffer_pct = st.slider("Safety buffer (% of avg daily outflow)", 5, 100, 30, step=5)
         safety_buffer = (buffer_pct/100.0) * avg_outflow
 
+    # Core calculation
     opening, hist_daily, plan_s, proj = build_projection(
-        bal, pay, fx, base_ccy, horizon_days, fx_shock_pct, delay_top_n, delay_days, supplier_multiplier
+        bal, pay, fx, base_ccy, horizon_days,
+        fx_shock_pct, delay_top_n, delay_days, supplier_multiplier
     )
-
     rec = recommendations(proj, opening, safety_buffer)
 
+    # KPIs row...
     c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Opening (base)", f"{opening:,.0f} {base_ccy}")
     c2.metric("Min cash", f"{rec['min_cash']:,.0f} {base_ccy}")
@@ -321,60 +370,44 @@ def main():
     c4.metric("Credit line need", f"{rec['credit_line_recommendation']:,.0f} {base_ccy}")
     c5.metric("Deposit potential", f"{rec['deposit_recommendation']:,.0f} {base_ccy}")
 
-    tab1, tab2, tab3 = st.tabs(["Dashboard", "Payments", "Download Report"])
+    # Tabs
+    tab1, tab2, tab3, tab4 = st.tabs(["Dashboard", "Payments", "Download Report", "AI Insights"])
 
     with tab1:
         st.subheader("Projected closing cash")
-        st.line_chart(proj.set_index("date")["closing_cash"])  # Streamlit quick chart
-
+        st.line_chart(proj.set_index("date")["closing_cash"])
         st.subheader("Daily components")
         st.bar_chart(proj.set_index("date")[["runrate","planned_in","planned_out"]])
-
-        st.caption("Run‑rate is simple EWMA over historical daily net. Replace with your ML model later.")
+        st.caption("Run-rate is simple EWMA over history. Replace with ML model later.")
 
     with tab2:
-        st.subheader("Upcoming payments (planned, scenario‑adjusted)")
-        show = plan_s.copy()[["date","type","category","amount","currency","amount_base","description"]]
-        show = show.sort_values(["date","type"], ascending=[True, False]).reset_index(drop=True)
-        st.dataframe(show, use_container_width=True)
+        st.subheader("Upcoming payments (scenario-adjusted)")
+        show = plan_s[["date","type","category","amount","currency","amount_base","description"]]
+        st.dataframe(show.sort_values(["date","type"], ascending=[True, False]), use_container_width=True)
 
     with tab3:
-        st.subheader("Liquidity table")
+        st.subheader("Liquidity table + Recommendations")
         rep = proj.copy()
         rep["opening"] = [opening] + list(proj["closing_cash"].shift(1).fillna(opening))[:-1]
         rep = rep[["date","opening","planned_in","planned_out","runrate","net","closing_cash"]]
-
-        # CSV buffer
         buf = io.StringIO()
         rep.to_csv(buf, index=False)
         st.download_button("Download CSV", buf.getvalue(), file_name="liquidity_projection.csv", mime="text/csv")
-
-        # Text recommendations
-        st.subheader("Recommendations")
         if rec["credit_line_recommendation"] > 0:
-            st.write(f"• Consider opening/using a short‑term credit line ≈ **{rec['credit_line_recommendation']:,.0f} {base_ccy}** to stay above buffer.")
+            st.write(f"• Credit line needed ≈ **{rec['credit_line_recommendation']:,.0f} {base_ccy}**.")
         else:
-            st.write("• No credit line needed under current scenarios (above buffer).")
-
+            st.write("• No credit line needed under current scenarios.")
         if rec["deposit_recommendation"] > 0:
-            st.write(f"• You can safely allocate ≈ **{rec['deposit_recommendation']:,.0f} {base_ccy}** to a short‑term deposit/instrument (tenor < earliest potential shortfall).")
+            st.write(f"• Safe to invest ≈ **{rec['deposit_recommendation']:,.0f} {base_ccy}**.")
         else:
-            st.write("• Hold liquidity; avoid locking funds into term deposits under current scenarios.")
+            st.write("• Hold liquidity, avoid deposits now.")
 
-    with st.expander("📎 Data locations & schema"):
-        st.markdown(
-            f"""
-            **CSV files (auto‑generated on first run):** `./data/\*`
+    with tab4:
+        st.subheader("🤖 AI Insights (Groq)")
+        insights = generate_ai_insights(client, proj, rec, base_ccy, horizon_days)
+        st.write(insights)
 
-            - `bank_balances.csv`: `date, account, currency, balance`
-            - `payments.csv`: `date, amount, currency, type[inflow|outflow], category, description, status[actual|planned]`
-            - `fx_rates.csv`: `date, base, quote, rate` (used for conversion to base currency)
-
-            Change/replace these with real exports (bank API, ERP, Treasury).
-            """
-        )
-
-    st.caption("Built for hackathon demo. Not investment advice. Replace sample FX & EWMA with real sources/models.")
+    st.caption("Built for Kazakhstan startups. Not investment advice.")
 
 if __name__ == "__main__":
     main()
