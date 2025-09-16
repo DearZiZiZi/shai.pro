@@ -12,7 +12,7 @@ The app expects **3 standard CSV files** (or you can use auto-generated demo dat
 
 This creates a **simple but powerful unified reporting system**.
 
-## 🚀 Quick Start
+## Quick Start
 
 1. **Clone the repo**
    ```bash
@@ -35,4 +35,4 @@ This creates a **simple but powerful unified reporting system**.
 TO-DO:
 1. Study specific financial metrics and features of the Kazakhstan market for tech startups.
 2. Apply classic ML algorithms to make base forecasts.
-3. Integrate Shai.pro AI agent to make advanced research & recommendation based on the startup's financial report.
+3. Integrate [Shai.pro](http://shai.pro/) AI agent to make advanced research & recommendation based on the startup's financial report.
