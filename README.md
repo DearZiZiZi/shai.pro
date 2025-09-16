@@ -29,7 +29,7 @@ This creates a **simple but powerful unified reporting system**.
 
 3. **Run the app**
     ```
-    pip install -r requirements.txt
+    streamlit run app.py
     ```
 
 TO-DO:
