@@ -10,72 +10,78 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import streamlit as st
-from groq import Groq
+
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
 
-client = Groq(api_key=os.environ['GROK_API_KEY'])
+if 'GEMINI_API_KEY' in os.environ:
+    genai.configure(api_key=os.environ['GEMINI_API_KEY'])
+else:
+    # Если ключа нет, выводим ошибку и завершаем программу
+    st.error("Ошибка: Переменная окружения 'GEMINI_API_KEY' не найдена. Пожалуйста, вставьте ваш ключ в файл .env.")
+    st.stop()
+
+# Инициализируем модель Gemini
+model = genai.GenerativeModel('gemini-1.5-flash-latest')
+
 APP_TITLE = "Easy CFO AI Assistant — Kazakhstan Startup Edition"
 BASE_CURRENCIES = ["KZT", "USD", "RUB"] 
 DATA_DIR = Path("data")
 
-BAL_PATH = DATA_DIR / "balances.csv"
-PAY_PATH = DATA_DIR / "payments.csv"
+BAL_PATH = DATA_DIR / "balances.csv"   
 FX_PATH = DATA_DIR / "fx.csv"
 TODAY = datetime.today().date()
 
+scenario_box = st.selectbox("Scenarios:", ['Scenario 1', 'Scenario 2'], index=0)
+if scenario_box == 'Scenario 1':
+    PAY_PATH = DATA_DIR / "payments.csv"
+else:
+    PAY_PATH = DATA_DIR / "payments2.csv" 
+
 # ---------------------------
-# Groq Insights
+# Gemini Insights
 # ---------------------------
 
-def generate_ai_insights(client, proj: pd.DataFrame, rec: dict, base_ccy: str, horizon_days: int):
-    """Call Groq LLM to generate insights for Kazakhstan-based startups."""
+def generate_ai_insights(model, proj: pd.DataFrame, rec: dict, base_ccy: str, horizon_days: int):
+    """
+    Вызов Google Gemini LLM для генерации аналитики для казахстанских стартапов.
+    """
     try:
-        summary = proj[["date","closing_cash","planned_in","planned_out"]].tail(14)  # last 2 weeks
+        summary = proj[["date","closing_cash","planned_in","planned_out"]].tail(14)
         summary_csv = summary.to_csv(index=False)
 
         user_prompt = f"""
-        You are a financial AI assistant for startups in Kazakhstan.
-        Base currency is {base_ccy}.
-        Forecast horizon is {horizon_days} days.
+        Вы — финансовый AI-помощник для стартапов в Казахстане.
+        Базовая валюта: {base_ccy}.
+        Горизонт прогноза: {horizon_days} дней.
         
-        Here is the 2-week forward projection data (CSV):
+        Данные 2-недельного прогноза (CSV):
         {summary_csv}
 
-        Key calculated values:
-        - Minimum cash: {rec['min_cash']:.0f} {base_ccy}
-        - Days below zero: {rec['days_below_zero']}
-        - Recommended credit line need: {rec['credit_line_recommendation']:.0f} {base_ccy}
-        - Deposit potential: {rec['deposit_recommendation']:.0f} {base_ccy}
+        Ключевые расчетные значения:
+        - Минимальный кэш: {rec['min_cash']:.0f} {base_ccy}
+        - Дни ниже нуля: {rec['days_below_zero']}
+        - Рекомендуемая потребность в кредитной линии: {rec['credit_line_recommendation']:.0f} {base_ccy}
+        - Потенциал для депозита: {rec['deposit_recommendation']:.0f} {base_ccy}
 
-        Please provide:
-        1. A short executive summary of liquidity health
-        2. Risks specific to startups in Kazakhstan (FX volatility, KZT/USD moves, tax deadlines, payroll pressure)
-        3. Actionable recommendations (cash buffer, financing, investment)
-        Keep it clear, practical, and in English.
+        Пожалуйста, предоставьте:
+        1. Краткий исполнительный обзор состояния ликвидности.
+        2. Риски, специфичные для стартапов в Казахстане (волатильность курса, движение KZT/USD, налоговые сроки, давление на зарплатный фонд).
+        3. Действенные рекомендации (денежный буфер, финансирование, инвестиции).
+        Сохраняйте текст понятным, очень коротко, практичным и на русском языке.
         """
+        
+        print(user_prompt)
 
-        completion = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
-            messages=[
-                {"role": "system", "content": "You are a CFO assistant helping Kazakhstani startups manage liquidity."},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.7,
-            max_completion_tokens=500,
-            top_p=0.95,
-            stream=False
-        )
-
-        return completion.choices[0].message.content.strip()
+        # Генерация контента с помощью модели Gemini
+        completion = model.generate_content(user_prompt)
+        
+        return completion.text.strip()
     except Exception as e:
-        return f"⚠️ AI Insights unavailable: {e}"
+        return f"⚠️ AI-аналитика недоступна: {e}"
     
-# ---------------------------
-# Utilities & sample data
-# ---------------------------
-
 def ensure_sample_data():
     """Ensures the data directory and sample CSV files exist (Kazakhstan-oriented)."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -234,6 +240,10 @@ def build_projection(bal: pd.DataFrame, pay: pd.DataFrame, fx: pd.DataFrame,
 
     # Opening balance (sum of all accounts converted to base)
     opening = 0.0
+
+    # print("Opening::::", bal)
+    # print('len:', len(bal))
+
     for _, r in bal.iterrows():
         opening += convert_amount_on_date(r["balance"], r["currency"], r["date"], fx, base_ccy)
 
@@ -277,6 +287,8 @@ def build_projection(bal: pd.DataFrame, pay: pd.DataFrame, fx: pd.DataFrame,
         cash.append(bal + v)
         bal = bal + v
     df["closing_cash"] = cash
+
+    
 
     return opening, hist_daily, plan, df
 
@@ -334,6 +346,8 @@ def main():
     bal, pay, fx = load_data()
     if bal is None or pay is None or fx is None:
         return
+
+
 
     # Sidebar settings (same as before) ...
     with st.sidebar:
@@ -403,9 +417,16 @@ def main():
             st.write("• Hold liquidity, avoid deposits now.")
 
     with tab4:
-        st.subheader("🤖 AI Insights (Groq)")
-        insights = generate_ai_insights(client, proj, rec, base_ccy, horizon_days)
-        st.write(insights)
+        st.subheader("🤖 AI Insights (Gemini)")
+        # Если клиент Gemini не инициализирован, сообщаем об этом
+        # if not genai.get_client().api_key:
+        #     st.info("Чтобы получить AI-аналитику, добавьте 'GEMINI_API_KEY' в файл .env.")
+        # else:
+
+        if st.button("Create short recommendations"):
+
+            insights = generate_ai_insights(model, proj, rec, base_ccy, horizon_days)
+            st.write(insights)
 
     st.caption("Built for Kazakhstan startups. Not investment advice.")
 
